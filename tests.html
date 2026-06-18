@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engine Validation Test Suite</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #fff1f2; color: #4c0519; padding: 2rem; }
+        .test-box { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(76,5,25,0.08); max-width: 600px; margin: 0 auto; }
+        h1 { color: #db2777; font-size: 1.5rem; margin-bottom: 1rem; text-align: center; }
+        p { font-size: 1rem; line-height: 1.5; text-align: center; }
+        .instructions { font-size: 0.85rem; color: #9f1239; margin-top: 1.5rem; text-align: center; border-top: 1px solid #ffe4e6; padding-top: 1rem; }
+    </style>
+</head>
+<body>
+
+    <div class="test-box">
+        <h1>Regex Engine Test Suite</h1>
+        <p>The automated regular expression validation suite is running in the background.</p>
+        
+        <p class="instructions">
+            <strong>How to view results:</strong><br>
+            Right-click anywhere on this page, select <strong>Inspect</strong>, and navigate to the <strong>Console</strong> tab to verify assertions!
+        </p>
+    </div>
+
+    <script type="module">
+        import { 
+            validateTitle, 
+            validateDuration, 
+            validateDate, 
+            validateTag, 
+            hasDuplicateWords 
+        } from './scripts/validators.js';
+
+        console.log("🚀 Starting System Validation Tests...");
+
+        // --- 1. TITLE VALIDATION TESTS ---
+        console.assert(validateTitle("Data Structures Assignment") === true, "ERR: Valid title failed");
+        console.assert(validateTitle("  Invalid Leading Space") === false, "ERR: Failed to block leading space");
+        console.assert(validateTitle("Invalid Trailing Space ") === false, "ERR: Failed to block trailing space");
+        console.assert(validateTitle("") === false, "ERR: Failed to block empty string");
+
+        // --- 2. DURATION VALIDATION TESTS ---
+        console.assert(validateDuration("120") === true, "ERR: Valid duration failed");
+        console.assert(validateDuration("0") === false, "ERR: Failed to block zero duration");
+        console.assert(validateDuration("-45") === false, "ERR: Failed to block negative numbers");
+        console.assert(validateDuration("45.5") === false, "ERR: Failed to block decimals");
+        console.assert(validateDuration("abc") === false, "ERR: Failed to block non-numeric characters");
+
+        // --- 3. DATE VALIDATION TESTS ---
+        console.assert(validateDate("2026-06-18") === true, "ERR: Valid date failed");
+        console.assert(validateDate("18-06-2026") === false, "ERR: Failed to catch wrong date sequence template");
+        console.assert(validateDate("2026/06/18") === false, "ERR: Failed to catch bad slash delimiters");
+
+        // --- 4. TAG VALIDATION TESTS ---
+        console.assert(validateTag("Academics") === true, "ERR: Valid tag failed");
+        console.assert(validateTag("Self-Care") === true, "ERR: Valid hyphenated tag failed");
+        console.assert(validateTag("Campus Life") === true, "ERR: Valid spaced tag failed");
+        console.assert(validateTag("Academics123") === false, "ERR: Failed to block embedded numbers");
+
+        // --- 5. ADVANCED REPEATED WORDS TESTS ---
+        console.assert(hasDuplicateWords("Submit the assignment") === false, "ERR: Falsely flagged clean sentence");
+        console.assert(hasDuplicateWords("Submit the the assignment") === true, "ERR: Failed to catch duplicate 'the'");
+        console.assert(hasDuplicateWords("Finish project project") === true, "ERR: Failed to catch duplicate 'project'");
+
+        console.log("🏁 Testing sequence finished! If no red error highlights appeared above, your regex codes passed perfectly.");
+    </script>
+</body>
+</html>
