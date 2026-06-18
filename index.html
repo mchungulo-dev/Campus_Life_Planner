@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Life Planner</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <link class="sheet" rel="stylesheet" href="styles/main.css">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
             <nav class="main-nav" aria-label="Primary Navigation">
                 <ul class="nav-list">
                     <li><button class="nav-btn active" data-target="dashboard-view">Dashboard</button></li>
-                    <li><button class="nav-btn" data-target="records-view">Tasks</button></li>
+                    <li><button class="nav-btn" data-target="workspace">Tasks</button></li> 
                     <li><button class="nav-btn" data-target="form-view">Add Task</button></li>
                     <li><button class="nav-btn" data-target="settings-view">Settings</button></li>
                     <li><button class="nav-btn" data-target="about-view">About</button></li>
@@ -56,13 +56,12 @@
 
                 <div class="chart-card">
                     <h3>Last 7 Days Trend</h3>
-                    <div id="bar-chart-container" class="bar-chart">
-                        </div>
+                    <div id="bar-chart-container" class="bar-chart"></div>
                 </div>
             </div>
         </section>
 
-        <section id="records-view" class="view-section hidden">
+        <section id="workspace" class="view-section hidden"> 
             <h2 class="section-title">Campus Records Workspace</h2>
 
             <div class="controls-card">
@@ -77,12 +76,16 @@
                         <label for="filter-tag">Filter by Tag:</label>
                         <select id="filter-tag">
                             <option value="all">All Tags</option>
+                            <option value="Academics">Academics</option>
+                            <option value="Fitness">Fitness</option>
+                            <option value="Social">Social</option>
+                            <option value="Lifestyle">Lifestyle</option>
                         </select>
                     </div>
 
                     <div class="control-field">
-                        <label for="sort-select">Sort Layout By:</label>
-                        <select id="sort-select">
+                        <label for="sort-dropdown">Sort Layout By:</label> 
+                        <select id="sort-dropdown">
                             <option value="date-asc">Date (Oldest First)</option>
                             <option value="date-desc">Date (Newest First)</option>
                             <option value="title-az">Title (A to Z)</option>
@@ -105,42 +108,46 @@
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="records-table-body">
-                        </tbody>
+                    <tbody id="tasks-table-body"></tbody>
                 </table>
 
-                <div id="mobile-cards-stack" class="mobile-cards-stack">
-                    </div>
+                <div id="tasks-cards-container" class="mobile-cards-stack"></div>
             </div>
         </section>
 
         <section id="form-view" class="view-section hidden">
             <h2 id="form-view-title" class="section-title">Schedule New Activity</h2>
             
-            <form id="planner-main-form" novalidate class="entry-form">
+            <form id="task-form"> 
                 <input type="hidden" id="form-record-id">
 
                 <div class="form-group">
-                    <label for="input-title">Task Title / Description:</label>
-                    <input type="text" id="input-title" required placeholder="e.g., Data Structures Assignment">
+                    <label for="task-title">Task Title / Description:</label> 
+                    <input type="text" id="task-title" required placeholder="e.g., Data Structures Assignment">
                     <span class="error-hint" id="err-title">Title cannot contain leading/trailing double spaces.</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="input-duration">Duration (in minutes):</label>
-                    <input type="number" id="input-duration" required placeholder="e.g., 120">
+                    <label for="task-duration">Duration (in minutes):</label> 
+                    <input type="number" id="task-duration" required placeholder="e.g., 120">
                     <span class="error-hint" id="err-duration">Please provide a non-zero positive digit integer value.</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="input-date">Target Planning Date:</label>
-                    <input type="date" id="input-date" required>
+                    <label for="task-date">Target Planning Date:</label> 
+                    <input type="date" id="task-date" required>
                     <span class="error-hint" id="err-date">Provide a valid calendar execution stamp (YYYY-MM-DD).</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="input-tag">Categorization Focus Tag:</label>
-                    <input type="text" id="input-tag" required placeholder="e.g., Academics, Social, Health">
+                    <label for="input-tag">Categorization Focus Tag:</label> 
+                    <select id="input-tag" required>
+                        <option value="" disabled selected>Select an option...</option>
+                        <option value="Academics">Academics</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Social">Social</option>
+                        <option value="Lifestyle">Lifestyle</option>
+                    </select>
                     <span class="error-hint" id="err-tag">Letters, hyphens, and standard spacing gaps only.</span>
                 </div>
 
@@ -202,5 +209,6 @@
 
     <div id="status-region" role="status" aria-live="polite" class="sr-only"></div>
 
+    <script type="module" src="./scripts/main.js"></script>
 </body>
 </html>
