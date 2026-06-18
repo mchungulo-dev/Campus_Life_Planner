@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Life Planner</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="global-header">
+        <div class="header-container">
+            <h1 class="app-title">Campus Life Planner</h1>
+            <nav class="main-nav" aria-label="Primary Navigation">
+                <ul class="nav-list">
+                    <li><button class="nav-btn active" data-target="dashboard-view">Dashboard</button></li>
+                    <li><button class="nav-btn" data-target="records-view">Tasks</button></li>
+                    <li><button class="nav-btn" data-target="form-view">Add Task</button></li>
+                    <li><button class="nav-btn" data-target="settings-view">Settings</button></li>
+                    <li><button class="nav-btn" data-target="about-view">About</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="main-layout">
+
+        <section id="dashboard-view" class="view-section">
+            <h2 class="section-title">Performance Dashboard</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Tasks</h3>
+                    <p id="stat-total-tasks" class="stat-number">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Duration</h3>
+                    <p id="stat-total-duration" class="stat-number">0 <span class="unit-label">mins</span></p>
+                </div>
+                <div class="stat-card">
+                    <h3>Top Focus Tag</h3>
+                    <p id="stat-top-tag" class="stat-number">—</p>
+                </div>
+            </div>
+
+            <div class="dashboard-charts-grid">
+                <div class="chart-card">
+                    <h3>Daily Capacity Allocation</h3>
+                    <div class="progress-bar-container">
+                        <div id="cap-progress-bar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <p id="cap-text-display">0 / 300 minutes used</p>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Last 7 Days Trend</h3>
+                    <div id="bar-chart-container" class="bar-chart">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="records-view" class="view-section hidden">
+            <h2 class="section-title">Campus Records Workspace</h2>
+
+            <div class="controls-card">
+                <div class="search-box-group">
+                    <label for="search-input">Live Regex Search:</label>
+                    <input type="text" id="search-input" placeholder="e.g., ^@tag:Academics or \b\d{2}:\d{2}\b">
+                    <span id="regex-error-msg" class="input-error-text" hidden>Invalid regular expression syntax</span>
+                </div>
+                
+                <div class="filter-sort-group">
+                    <div class="control-field">
+                        <label for="filter-tag">Filter by Tag:</label>
+                        <select id="filter-tag">
+                            <option value="all">All Tags</option>
+                        </select>
+                    </div>
+
+                    <div class="control-field">
+                        <label for="sort-select">Sort Layout By:</label>
+                        <select id="sort-select">
+                            <option value="date-asc">Date (Oldest First)</option>
+                            <option value="date-desc">Date (Newest First)</option>
+                            <option value="title-az">Title (A to Z)</option>
+                            <option value="title-za">Title (Z to A)</option>
+                            <option value="duration-asc">Duration (Shortest First)</option>
+                            <option value="duration-desc">Duration (Longest First)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="records-display-container">
+                <table class="records-table" id="desktop-records-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Task Title</th>
+                            <th scope="col">Focus Tag</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Target Date</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records-table-body">
+                        </tbody>
+                </table>
+
+                <div id="mobile-cards-stack" class="mobile-cards-stack">
+                    </div>
+            </div>
+        </section>
+
+        <section id="form-view" class="view-section hidden">
+            <h2 id="form-view-title" class="section-title">Schedule New Activity</h2>
+            
+            <form id="planner-main-form" novalidate class="entry-form">
+                <input type="hidden" id="form-record-id">
+
+                <div class="form-group">
+                    <label for="input-title">Task Title / Description:</label>
+                    <input type="text" id="input-title" required placeholder="e.g., Data Structures Assignment">
+                    <span class="error-hint" id="err-title">Title cannot contain leading/trailing double spaces.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-duration">Duration (in minutes):</label>
+                    <input type="number" id="input-duration" required placeholder="e.g., 120">
+                    <span class="error-hint" id="err-duration">Please provide a non-zero positive digit integer value.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-date">Target Planning Date:</label>
+                    <input type="date" id="input-date" required>
+                    <span class="error-hint" id="err-date">Provide a valid calendar execution stamp (YYYY-MM-DD).</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-tag">Categorization Focus Tag:</label>
+                    <input type="text" id="input-tag" required placeholder="e.g., Academics, Social, Health">
+                    <span class="error-hint" id="err-tag">Letters, hyphens, and standard spacing gaps only.</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="form-submit-btn" class="btn-primary">Save Activity</button>
+                    <button type="button" id="form-cancel-btn" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="settings-view" class="view-section hidden">
+            <h2 class="section-title">Application Preferences</h2>
+            
+            <div class="settings-card">
+                <h3>Capacity Configurations</h3>
+                <div class="form-group">
+                    <label for="setting-cap-input">Max Allowed Plan Window (Minutes/Day):</label>
+                    <input type="number" id="setting-cap-input" value="300">
+                </div>
+
+                <h3>System Unit Metrics</h3>
+                <div class="form-group">
+                    <label for="setting-unit-select">Primary Duration Unit Render Block:</label>
+                    <select id="setting-unit-select">
+                        <option value="minutes">Minutes (m)</option>
+                        <option value="hours">Hours (h)</option>
+                    </select>
+                </div>
+
+                <h3>Data Import / Export Backup</h3>
+                <div class="backup-actions">
+                    <button id="btn-export-json" class="btn-secondary">Export JSON Backup</button>
+                    <div class="file-upload-wrapper">
+                        <label for="btn-import-json" class="custom-file-upload">Upload Backup File</label>
+                        <input type="file" id="btn-import-json" accept=".json">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about-view" class="view-section hidden">
+            <h2 class="section-title">About Campus Life Planner</h2>
+            <div class="about-card">
+                <p>The Campus Life Planner is a robust, responsive vanilla web system application designed to help students track tasks, balance schedule durations, and capture key daily performance benchmarks seamlessly.</p>
+                
+                <h3>Developer Contact Profiles</h3>
+                <ul class="contact-links">
+                    <li><strong>Email Direct:</strong> <a href="mailto:m.chungulo@alustudent.com">m.chungulo@alustudent.com</a></li>
+                    <li><strong>GitHub Repository Workspace:</strong> <a href="https://github.com" target="_blank" rel="noopener noreferrer">github.com/MemoryChungulo</a></li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="global-footer">
+        <p>Coded by Memory Chungulo</p>
+    </footer>
+
+    <div id="status-region" role="status" aria-live="polite" class="sr-only"></div>
+
+</body>
+</html>
