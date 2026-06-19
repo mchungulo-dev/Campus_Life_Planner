@@ -25,10 +25,16 @@ export function initializeState(defaultSeedData = []) {
 
     // 2. Load task data tracking entries
     const storedRecords = getSavedRecords();
-    if (storedRecords && storedRecords.length > 0) {
-        records = storedRecords;
+    
+    // Check if the key exists in localStorage to see if a session has ever been initialized
+    const hasExistingStorage = localStorage.getItem('campus_life_planner_records') !== null;
+
+    // FIX: If the user has a save file OR if storedRecords contains an array (even an empty one)
+    if (hasExistingStorage || (Array.isArray(storedRecords) && storedRecords.length === 0)) {
+        // Respect the empty slate! Do NOT load seed data.
+        records = storedRecords || [];
     } else if (defaultSeedData && defaultSeedData.length > 0) {
-        // First-time setup out-of-box experience seeding data array
+        // Only seed data if this is a completely brand-new user with absolutely zero data history
         records = defaultSeedData;
         saveRecords(records);
     } else {
@@ -116,7 +122,7 @@ export function updateRecord(id, updatedData) {
  */
 export function deleteRecord(id) {
     records = records.filter(rec => rec.id !== id);
-    saveRecords(records);
+    saveRecords(records); 
 }
 
 /**
@@ -160,4 +166,48 @@ export function getSettings() {
 export function updateDailyCapacity(newCapacity) {
     settings.dailyCapacity = parseInt(newCapacity, 10) || 480;
     saveSettings(settings);
+}
+
+/**
+ * Generates an aggregated list of total minutes tracked over a fixed Sunday - Saturday week.
+ * @param {Array} dynamicRecords - The current list of tasks passed from the UI
+ * @returns {Array} Array of 7 objects representing Sun - Sat with total calculated minutes
+ */
+export function getLast7DaysTrendData(dynamicRecords = []) {
+    const outputs = [];
+    const today = new Date();
+    
+    // Get the current day of the week (0 for Sunday, 1 for Monday, etc.)
+    const currentDayOfWeek = today.getDay(); 
+    
+    // Calculate the date of the most recent Sunday
+    const startSunday = new Date(today);
+    startSunday.setDate(today.getDate() - currentDayOfWeek);
+
+    // Build the week forward from Sunday to Saturday
+    for (let i = 0; i < 7; i++) {
+        const targetDate = new Date(startSunday);
+        targetDate.setDate(startSunday.getDate() + i);
+        
+        // Format date string to match your records format (YYYY-MM-DD)
+        const year = targetDate.getFullYear();
+        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const day = String(targetDate.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
+        
+        // Format short weekday string label (e.g., "Sun", "Mon", "Tue")
+        const displayLabel = targetDate.toLocaleDateString('en-US', { weekday: 'short' });
+        
+        // Calculate the aggregate minutes for this specific day
+        const totalMinutes = dynamicRecords
+            .filter(rec => rec.date === dateString)
+            .reduce((sum, rec) => sum + (parseInt(rec.duration, 10) || 0), 0);
+            
+        outputs.push({
+            displayLabel,
+            totalMinutes
+        });
+    }
+    
+    return outputs;
 }

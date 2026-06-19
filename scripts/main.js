@@ -1,3 +1,5 @@
+import {renderWeeklyTrendChart } from './ui.js';
+
 import { 
     validateTitle, 
     validateDuration, 
@@ -8,7 +10,7 @@ import {
 
 import { 
     initializeState, 
-    getProcessedRecords, 
+    getProcessedRecords, // Kept here cleanly
     addRecord, 
     deleteRecord, 
     updateRecord, 
@@ -25,8 +27,8 @@ const sections = document.querySelectorAll('.view-section');
 
 // Form and Input Elements
 const taskForm = document.getElementById('task-form');
-const formRecordId = document.getElementById('form-record-id'); 
-const formViewTitle = document.getElementById('form-view-title'); 
+const formRecordId = document.getElementById('form-record-id'); // Hidden tracker field
+const formViewTitle = document.getElementById('form-view-title'); // Form heading element
 const titleInput = document.getElementById('task-title');
 const durationInput = document.getElementById('task-duration');
 const dateInput = document.getElementById('task-date');
@@ -82,12 +84,13 @@ function renderInterface() {
     if (searchInput && searchInput.value.trim() !== '') {
         try {
             const query = searchInput.value.trim();
-            const regex = new RegExp(query, 'i'); 
+            const regex = new RegExp(query, 'i'); // Case-insensitive matching
             activeTasks = activeTasks.filter(task => regex.test(task.title) || regex.test(task.tag));
             
             const errorMsg = document.getElementById('regex-error-msg');
             if (errorMsg) errorMsg.hidden = true;
         } catch (e) {
+            // Gracefully catch incomplete or broken regular expression strings
             const errorMsg = document.getElementById('regex-error-msg');
             if (errorMsg) errorMsg.hidden = false;
         }
@@ -320,6 +323,61 @@ function updateDashboardMetrics() {
     const percentage = Math.min((totalMins / maxLimit) * 100, 100);
     if (capProgressBar) capProgressBar.style.width = `${percentage}%`;
     if (capTextDisplay) capTextDisplay.textContent = `${totalMins} / ${maxLimit} minutes used`;
+
+    renderWeeklyTrendChart(tasks);
+}
+
+/**
+ * Stage 6: Application Preferences & JSON Data Backup Portability Hooks
+ */
+function initializeSettingsControls() {
+    const exportBtn = document.getElementById('btn-export-json');
+    const importInput = document.getElementById('btn-import-json');
+
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            const runtimeTasks = getProcessedRecords();
+            const JSONStringStream = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(runtimeTasks, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", JSONStringStream);
+            downloadAnchor.setAttribute("download", `campus_lifecycle_backup_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        });
+    }
+
+    if (importInput) {
+        importInput.addEventListener('change', (event) => {
+            const uploadedFile = event.target.files[0];
+            if (!uploadedFile) return;
+
+            const streamReader = new FileReader();
+            streamReader.onload = function(e) {
+    try {
+        const parsedPayload = JSON.parse(e.target.result);
+        if (Array.isArray(parsedPayload)) {
+            if (confirm(`Do you want to import these ${parsedPayload.length} timeline tasks?`)) {
+                // 1. Save the new array into your state management layer
+                initializeState(parsedPayload);
+                renderWeeklyTrendChart(parsedPayload);
+                // 2. Refresh the UI views
+                renderInterface();
+                updateDashboardMetrics();
+                
+                alert("🎒 Backup dataset successfully loaded!");
+            }
+        } else {
+            alert("Invalid format. Backup file must contain a valid array matrix structure.");
+        }
+    } catch (err) {
+        console.error("Import Debug Error Details:", err); // Logs the exact issue to your DevTools console
+        alert("Error processing file document. Please check your JSON file syntax formatting.");
+    }
+};
+            streamReader.readAsText(uploadedFile);
+        });
+    }
 }
 
 /**
@@ -342,7 +400,7 @@ async function bootApplication() {
     initializeNavigation();
     initializeFormHandlers();
     initializeDataControls();
-
+    initializeSettingsControls();
     renderInterface();
     updateDashboardMetrics();
 
@@ -350,3 +408,5 @@ async function bootApplication() {
 }
 
 document.addEventListener('DOMContentLoaded', bootApplication);
+
+
