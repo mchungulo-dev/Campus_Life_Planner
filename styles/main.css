@@ -263,6 +263,52 @@ textarea:focus-visible {
     border-bottom: 2px solid var(--clr-border);
 }
 
+#bar-chart-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 200px; 
+    padding: 10px;
+}
+
+.chart-column-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.chart-bar-track {
+    width: 30px;
+    height: 120px; 
+    background-color: #f3f4f6; 
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+.chart-bar-fill {
+    width: 100%;
+    background-color: #b8235a; 
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: height 0.3s ease; 
+}
+
+.chart-value-bubble {
+    font-size: 0.75rem;
+    color: #4b5563;
+}
+
+.chart-axis-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
 /* Form Elements */
 .controls-card {
     background: var(--clr-surface);
