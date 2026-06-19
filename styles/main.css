@@ -52,13 +52,13 @@ thead th,
 .tasks-table th,
 th {
     color: #4c0519 !important;
-    background-color: var(--clr-surface) !important; 
+    background-color: var(--clr-surface) !important;
 }
 
 body.dark-theme thead th,
 body.dark-theme th {
-    background-color: var(--clr-surface) !important; 
-    color: var(--clr-text-main) !important;
+    background-color: #1f2937 !important;  
+    color: #f9fafb !important;              
 }
 
 /* Body Elements*/
