@@ -23,6 +23,44 @@
     --shadow-md: 0 4px 12px rgba(76, 5, 25, 0.08);
 }
 
+/* Dark Theme Elements*/
+body.dark-theme {
+    --clr-bg: #111827;          /* Deep midnight charcoal background */
+    --clr-surface: #1f2937;     /* Dark slate gray for your cards and tables */
+    --clr-text-main: #f9fafb;   /* Crisp off-white for highly readable main text */
+    --clr-text-muted: #9ca3af;  /* Balanced silver-gray for secondary text labels */
+    --clr-border: #374151;      /* Charcoal line dividers instead of light pink */
+    
+    --clr-primary: #db2777;     
+    --clr-primary-hover: #be185d;
+}
+
+body {
+    background-color: var(--clr-bg);
+    color: var(--clr-text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.view-section, .settings-card, .task-card, table, th, td {
+    background-color: var(--clr-bg);
+    color: var(--clr-text-main);
+    border-color: var(--clr-border);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+thead th,
+.tasks-table th,
+th {
+    color: #4c0519 !important;
+    background-color: var(--clr-surface) !important; 
+}
+
+body.dark-theme thead th,
+body.dark-theme th {
+    background-color: var(--clr-surface) !important; 
+    color: var(--clr-text-main) !important;
+}
+
 /* Body Elements*/
 *, *::before, *::after {
     box-sizing: border-box;
@@ -459,6 +497,10 @@ input:focus, select:focus {
 
 .custom-file-upload:hover {
     background-color: var(--clr-border);
+}
+
+.btn-danger {
+    font-family: var(--font-primary);
 }
 
 /* About Elements */

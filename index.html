@@ -177,12 +177,27 @@
                     </select>
                 </div>
 
+                <div class="settings-card" style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #ccc; border-radius: 8px;">
+                    <h3>Appearance Options</h3>
+                    <p>Switch between light and dark visual aesthetics across your workspace layout environment.</p>
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                        <label for="theme-toggle-select" style="font-weight: 600;">Active Theme Mode:</label>
+                        <select id="theme-toggle-select" style="padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer;">
+                            <option value="light">☀️ Light Theme</option>
+                            <option value="dark">🌙 Dark Theme</option>
+                        </select>
+                    </div>
+                </div>
+
                 <h3>Data Import / Export Backup</h3>
                 <div class="backup-actions">
                     <button id="btn-export-json" class="btn-secondary">Export JSON Backup</button>
                     <div class="file-upload-wrapper">
                         <label for="btn-import-json" class="custom-file-upload">Upload Backup File</label>
                         <input type="file" id="btn-import-json" accept=".json">
+                        <button id="btn-reset-data" class="btn-secondary" style="background-color: var(--clr-danger, #e11d48); color: #ffffff; border: none; margin: 0; margin-left: 0.5rem;">
+                            Reset App Data
+                        </button>
                     </div>
                 </div>
             </div>

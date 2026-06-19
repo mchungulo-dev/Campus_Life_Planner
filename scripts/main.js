@@ -1,4 +1,4 @@
-import {renderWeeklyTrendChart } from './ui.js';
+import { renderWeeklyTrendChart } from './ui.js';
 
 import { 
     validateTitle, 
@@ -10,7 +10,7 @@ import {
 
 import { 
     initializeState, 
-    getProcessedRecords, // Kept here cleanly
+    getProcessedRecords, 
     addRecord, 
     deleteRecord, 
     updateRecord, 
@@ -231,10 +231,8 @@ function initializeFormHandlers() {
         };
 
         if (targetId) {
-            // Execution Loop Branch A: Update record entry
             updateRecord(targetId, taskData);
         } else {
-            // Execution Loop Branch B: Create standard entry
             addRecord(taskData);
         }
 
@@ -252,7 +250,6 @@ function initializeFormHandlers() {
         if (workspaceBtn) workspaceBtn.click();
     });
 
-    // Form cancel button reset action
     const cancelBtn = document.getElementById('form-cancel-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {
@@ -284,7 +281,7 @@ function initializeDataControls() {
 
     if (searchInput) {
         searchInput.addEventListener('input', () => {
-            renderInterface(); // Rerenders instantly utilizing input query constraint streams
+            renderInterface();
         });
     }
 }
@@ -328,12 +325,53 @@ function updateDashboardMetrics() {
 }
 
 /**
- * Stage 6: Application Preferences & JSON Data Backup Portability Hooks
+ * Stage 6 & 7: Theme Controls & Data Export/Import/Reset Hooks
  */
 function initializeSettingsControls() {
     const exportBtn = document.getElementById('btn-export-json');
     const importInput = document.getElementById('btn-import-json');
+    const themeSelect = document.getElementById('theme-toggle-select');
+    const resetBtn = document.getElementById('btn-reset-data'); // 👈 Cached Reset Button
 
+    // --- 1. Load Saved Theme Preference on Page Load ---
+    const activeSettings = getSettings() || {};
+    if (activeSettings.theme) {
+        if (themeSelect) themeSelect.value = activeSettings.theme;
+        if (activeSettings.theme === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    }
+
+    // --- 2. Listen for Theme Swaps Live ---
+    if (themeSelect) {
+        themeSelect.addEventListener('change', (e) => {
+            const selectedTheme = e.target.value;
+            if (selectedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+
+            const runtimeSettings = getSettings() || {};
+            runtimeSettings.theme = selectedTheme;
+            localStorage.setItem('campus_life_planner_settings', JSON.stringify(runtimeSettings));
+        });
+    }
+
+    // --- 3. Clear All Storage System Reset Trigger ---
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm("🚨 WARNING: Are you absolutely sure you want to delete ALL application data, customized configurations, and logged campus activities? This action cannot be undone.")) {
+                localStorage.clear(); // Clears all arrays and initialized flags instantly
+                alert("🧹 Application clean slate achieved! System reloading...");
+                window.location.reload(); // Hard reloads page to default initial states
+            }
+        });
+    }
+
+    // --- 4. JSON Export/Import Infrastructure ---
     if (exportBtn) {
         exportBtn.addEventListener('click', () => {
             const runtimeTasks = getProcessedRecords();
@@ -354,27 +392,24 @@ function initializeSettingsControls() {
 
             const streamReader = new FileReader();
             streamReader.onload = function(e) {
-    try {
-        const parsedPayload = JSON.parse(e.target.result);
-        if (Array.isArray(parsedPayload)) {
-            if (confirm(`Do you want to import these ${parsedPayload.length} timeline tasks?`)) {
-                // 1. Save the new array into your state management layer
-                initializeState(parsedPayload);
-                renderWeeklyTrendChart(parsedPayload);
-                // 2. Refresh the UI views
-                renderInterface();
-                updateDashboardMetrics();
-                
-                alert("🎒 Backup dataset successfully loaded!");
-            }
-        } else {
-            alert("Invalid format. Backup file must contain a valid array matrix structure.");
-        }
-    } catch (err) {
-        console.error("Import Debug Error Details:", err); // Logs the exact issue to your DevTools console
-        alert("Error processing file document. Please check your JSON file syntax formatting.");
-    }
-};
+                try {
+                    const parsedPayload = JSON.parse(e.target.result);
+                    if (Array.isArray(parsedPayload)) {
+                        if (confirm(`Do you want to import these ${parsedPayload.length} timeline tasks?`)) {
+                            initializeState(parsedPayload);
+                            renderWeeklyTrendChart(parsedPayload);
+                            renderInterface();
+                            updateDashboardMetrics();
+                            alert("🎒 Backup dataset successfully loaded!");
+                        }
+                    } else {
+                        alert("Invalid format. Backup file must contain a valid array matrix structure.");
+                    }
+                } catch (err) {
+                    console.error("Import Debug Error Details:", err);
+                    alert("Error processing file document. Please check your JSON file syntax formatting.");
+                }
+            };
             streamReader.readAsText(uploadedFile);
         });
     }
@@ -397,6 +432,7 @@ async function bootApplication() {
 
     initializeState(starterData);
 
+    // Run core engine attachments natively
     initializeNavigation();
     initializeFormHandlers();
     initializeDataControls();
@@ -407,6 +443,5 @@ async function bootApplication() {
     console.log("⚡ Campus Life Planner interface successfully booted!");
 }
 
+// Ensure execution loop loads correctly on document ready state
 document.addEventListener('DOMContentLoaded', bootApplication);
-
-
