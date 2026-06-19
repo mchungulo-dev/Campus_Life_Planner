@@ -394,13 +394,27 @@ function initializeSettingsControls() {
             streamReader.onload = function(e) {
                 try {
                     const parsedPayload = JSON.parse(e.target.result);
+                    
                     if (Array.isArray(parsedPayload)) {
                         if (confirm(`Do you want to import these ${parsedPayload.length} timeline tasks?`)) {
+                            
+                            // 1. Send the data to your state manager
                             initializeState(parsedPayload);
-                            renderWeeklyTrendChart(parsedPayload);
-                            renderInterface();
-                            updateDashboardMetrics();
-                            alert("🎒 Backup dataset successfully loaded!");
+                            
+                            // 2. Clear old state data out of localStorage completely
+                            localStorage.removeItem('tasks');
+                            localStorage.removeItem('campus_lifecycle_records');
+                            localStorage.removeItem('campus_life_planner_records');
+
+                            // 3. Forcefully save the new data back under standard potential keys
+                            const jsonString = JSON.stringify(parsedPayload);
+                            localStorage.setItem('tasks', jsonString);
+                            localStorage.setItem('campus_lifecycle_records', jsonString);
+                            localStorage.setItem('campus_life_planner_records', jsonString);
+
+                            // 4. Force a clean system refresh to let bootApplication() load it perfectly
+                            alert("Backup dataset successfully loaded! Click OK to refresh your workspace view.");
+                            window.location.reload(); 
                         }
                     } else {
                         alert("Invalid format. Backup file must contain a valid array matrix structure.");
